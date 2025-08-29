@@ -1,27 +1,24 @@
-'use client';
- 
-import { authenticate } from '@/app/lib/actions';
-import { Button } from '@/app/ui/button';
-import { lusitana } from '@/app/ui/fonts';
-import { ArrowRightIcon } from '@heroicons/react/20/solid';
+"use client";
 
+import { authenticate } from "@/app/lib/actions";
+import { lusitana } from "@/app/ui/fonts";
+import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import {
   AtSymbolIcon,
-
   ExclamationCircleIcon,
   KeyIcon,
-} from '@heroicons/react/24/outline';
-import { useSearchParams } from 'next/navigation';
-import { useActionState } from 'react';
- 
+} from "@heroicons/react/24/outline";
+import { useSearchParams } from "next/navigation";
+import { useActionState } from "react";
+import { Button } from "./button";
+
 export default function LoginForm() {
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
+  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
   const [errorMessage, formAction, isPending] = useActionState(
     authenticate,
-    undefined,
+    undefined
   );
- 
   return (
     <form action={formAction} className="space-y-3">
       <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
