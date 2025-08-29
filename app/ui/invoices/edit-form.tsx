@@ -1,6 +1,6 @@
 'use client';
 
-import { State, updateInvoice } from '@/app/lib/actions';
+import { updateInvoice } from '@/app/lib/actions';
 import { CustomerField, InvoiceForm } from '@/app/lib/definitions';
 import { Button } from '@/app/ui/button';
 import {
@@ -10,7 +10,6 @@ import {
   UserCircleIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { useActionState } from 'react';
 
 export default function EditInvoiceForm({
   invoice,
@@ -19,12 +18,10 @@ export default function EditInvoiceForm({
   invoice: InvoiceForm;
   customers: CustomerField[];
 }) {
-  const initialState: State = { message: null, errors: {} };
   const updateInvoiceWithId = updateInvoice.bind(null, invoice.id);
-  const [state, formAction] = useActionState(updateInvoiceWithId, initialState);
 
   return (
-    <form action={formAction}>
+    <form action={updateInvoiceWithId}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         {/* Customer Name */}
         <div className="mb-4">
@@ -77,6 +74,7 @@ export default function EditInvoiceForm({
           </legend>
           <div className="rounded-md border border-gray-200 bg-white px-[14px] py-3">
             <div className="flex gap-4">
+              {/* Pending */}
               <div className="flex items-center">
                 <input
                   id="pending"
@@ -93,6 +91,8 @@ export default function EditInvoiceForm({
                   Pending <ClockIcon className="h-4 w-4" />
                 </label>
               </div>
+
+              {/* Paid */}
               <div className="flex items-center">
                 <input
                   id="paid"
@@ -112,17 +112,17 @@ export default function EditInvoiceForm({
             </div>
           </div>
         </fieldset>
+      </div>
 
-        {/* Buttons */}
-        <div className="mt-6 flex justify-end gap-4">
-          <Link
-            href="/dashboard/invoices"
-            className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
-          >
-            Cancel
-          </Link>
-          <Button type="submit">Edit Invoice</Button>
-        </div>
+      {/* Actions */}
+      <div className="mt-6 flex justify-end gap-4">
+        <Link
+          href="/dashboard/invoices"
+          className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
+        >
+          Cancel
+        </Link>
+        <Button type="submit">Edit Invoice</Button>
       </div>
     </form>
   );

@@ -26,17 +26,13 @@ export function UpdateInvoice({ id }: { id: string }) {
 }
 
 export function DeleteInvoice({ id }: { id: string }) {
-  // Wrapper function untuk form action
-  async function deleteInvoiceWithId(formData: FormData) {
-    'use server';
-    await deleteInvoice(id);
-  }
-
+  const deleteInvoiceWithId = deleteInvoice.bind(null, id);
+ 
   return (
     <form action={deleteInvoiceWithId}>
       <button type="submit" className="rounded-md border p-2 hover:bg-gray-100">
         <span className="sr-only">Delete</span>
-        <TrashIcon className="w-5" />
+        <TrashIcon className="w-4" />
       </button>
     </form>
   );
