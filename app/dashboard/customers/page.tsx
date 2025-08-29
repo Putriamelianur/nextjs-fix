@@ -1,45 +1,37 @@
-// app/dashboard/customers/page.tsx
-import { fetchFilteredCustomers } from "@/app/lib/data";
+import { fetchCustomersPages, fetchFilteredCustomers } from "@/app/lib/data";
+import Pagination from "@/app/ui/customers/pagination";
+import CustomersTable from "@/app/ui/customers/table";
+import { lusitana } from "@/app/ui/fonts";
+import Search from "@/app/ui/search";
+import { CustomersTableSkeleton } from "@/app/ui/skeletons";
+import { Suspense } from "react";
 
-export default async function CustomersPage() {
-  const customers = await fetchFilteredCustomers("");
+export default async function Page(props: {
+  searchParams?: Promise<{ query?: string; page?: string }>;
+}) {
+  const searchParams = await props.searchParams;
+  const query = searchParams?.query || "";
+  const currentPage = Number(searchParams?.page) || 1;
+
+  const customers = await fetchFilteredCustomers(query, currentPage);
+  const totalPages = await fetchCustomersPages(query);
 
   return (
-    <div className="w-full p-6">
-      <h1 className="text-2xl font-bold mb-6">Customers</h1>
+    <div className="w-full">
+      <div className="flex w-full items-center justify-between">
+        <h1 className={`${lusitana.className} text-2xl`}>Customers</h1>
+      </div>
 
-      <div className="overflow-x-auto rounded-lg border border-gray-200">
-        <table className="min-w-full bg-white text-sm">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="px-4 py-2 text-left">Name</th>
-              <th className="px-4 py-2 text-left">Email</th>
-              <th className="px-4 py-2 text-left">Total Invoices</th>
-              <th className="px-4 py-2 text-left">Total Paid</th>
-              <th className="px-4 py-2 text-left">Total Pending</th>
-            </tr>
-          </thead>
-          <tbody>
-            {customers.map((customer) => (
-              <tr key={customer.id} className="border-t">
-                <td className="px-4 py-2 flex items-center gap-2">
-                  {customer.image_url && (
-                    <img
-                      src={customer.image_url}
-                      alt={customer.name}
-                      className="w-8 h-8 rounded-full"
-                    />
-                  )}
-                  {customer.name}
-                </td>
-                <td className="px-4 py-2">{customer.email}</td>
-                <td className="px-4 py-2">{customer.total_invoices}</td>
-                <td className="px-4 py-2">{customer.total_paid}</td>
-                <td className="px-4 py-2">{customer.total_pending}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
+        <Search placeholder="Search customers..." />
+      </div>
+
+      <Suspense key={query + currentPage} fallback={<CustomersTableSkeleton />}>
+        <CustomersTable customers={customers} />
+      </Suspense>
+
+      <div className="mt-5 flex w-full justify-center">
+        <Pagination totalPages={totalPages} />
       </div>
     </div>
   );
